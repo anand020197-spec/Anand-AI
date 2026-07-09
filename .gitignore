@@ -4,7 +4,6 @@ __pycache__/
 
 # Virtual Environment
 venv/
-.env/
 
 # VS Code
 .vscode/
@@ -18,3 +17,6 @@ venv/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Environment Variables
+.env
