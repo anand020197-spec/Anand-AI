@@ -25,6 +25,9 @@ print("=" * 50)
 print("🤖 Anand AI")
 print("=" * 50)
 
+# Create conversation history
+chat = model.start_chat(history=[])
+
 while True:
     user_input = input("\nYou: ")
 
@@ -33,7 +36,7 @@ while True:
         break
 
     try:
-        response = model.generate_content(user_input)
+        response = chat.send_message(user_input)
         print(f"\nAnand AI: {response.text}")
     except Exception as e:
         print(f"\nError: {e}")
