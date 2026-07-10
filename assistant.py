@@ -4,20 +4,20 @@ from dotenv import load_dotenv
 from google import genai
 from prompts import ASSISTANT_PROMPT
 
-# Load .env file
+# Load environment variables
 load_dotenv()
 
-# Get API Key
+# Read API Key
 api_key = os.getenv("GEMINI_API_KEY")
 
-# If running on Streamlit Cloud
+# Streamlit Cloud Secret
 if not api_key:
     api_key = st.secrets.get("GEMINI_API_KEY")
 
 # Create Gemini Client
 client = genai.Client(api_key=api_key)
 
-# Store conversation history
+# Chat History
 history = []
 
 
@@ -33,7 +33,7 @@ def get_response(user_message):
 
         # Generate response
         response = client.models.generate_content(
-            model="gemini-3.5-flash"
+            model="gemini-3.5-flash",
             contents=history,
             config={
                 "system_instruction": ASSISTANT_PROMPT,
@@ -44,7 +44,7 @@ def get_response(user_message):
 
         ai_text = response.text
 
-        # Save AI response
+        # Save assistant reply
         history.append({
             "role": "model",
             "parts": [{"text": ai_text}]
