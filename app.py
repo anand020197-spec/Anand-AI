@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 from memory import save_memory, get_memory
+from prompts import ASSISTANT_PROMPT
 
 # Load environment variables
 load_dotenv()
@@ -10,18 +11,12 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # Create Gemini model
+# Create Gemini model
 model = genai.GenerativeModel(
     "gemini-2.5-flash",
-    system_instruction="""
-    You are Anand, a personal AI assistant.
-    Your purpose is to help users solve problems,
-    answer questions, explain concepts, write content,
-    and provide useful guidance.
-
-    Always introduce yourself as Anand.
-    Be friendly, professional, and helpful.
-    """
+    system_instruction=ASSISTANT_PROMPT
 )
+
 print("=" * 50)
 print("🤖 Anand AI")
 print("=" * 50)
