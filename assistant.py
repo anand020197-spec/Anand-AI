@@ -1,36 +1,56 @@
 import os
-from dotenv import load_dotenv
 import streamlit as st
-import google.generativeai as genai
+from dotenv import load_dotenv
+from google import genai
 from prompts import ASSISTANT_PROMPT
 
-# Load local .env (for local development)
+# Load .env file
 load_dotenv()
 
-# Read API key
+# Get API Key
 api_key = os.getenv("GEMINI_API_KEY")
 
-# If running on Streamlit Cloud, read from Secrets
+# If running on Streamlit Cloud
 if not api_key:
-    api_key = st.secrets["GEMINI_API_KEY"]
+    api_key = st.secrets.get("GEMINI_API_KEY")
 
-# Configure Gemini
-genai.configure(api_key=api_key)
+# Create Gemini Client
+client = genai.Client(api_key=api_key)
 
-# Create model
-model = genai.GenerativeModel(
-    "gemini-2.5-flash",
-    system_instruction=ASSISTANT_PROMPT
-)
-
-# Start chat session
-chat = model.start_chat(history=[])
+# Store conversation history
+history = []
 
 
 def get_response(user_message):
+    global history
+
     try:
-        response = chat.send_message(user_message)
-        return response.text
+        # Add user message
+        history.append({
+            "role": "user",
+            "parts": [{"text": user_message}]
+        })
+
+        # Generate response
+        response = client.models.generate_content(
+            model="gemini-3.5-flash"
+            contents=history,
+            config={
+                "system_instruction": ASSISTANT_PROMPT,
+                "temperature": 0.7,
+                "max_output_tokens": 1024,
+            },
+        )
+
+        ai_text = response.text
+
+        # Save AI response
+        history.append({
+            "role": "model",
+            "parts": [{"text": ai_text}]
+        })
+
+        return ai_text
 
     except Exception as e:
-        return f"Error: {e}"
+        return f"❌ Error: {str(e)}"
